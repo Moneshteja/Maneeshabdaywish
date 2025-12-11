@@ -99,18 +99,15 @@
   </main>
 
 <script>
-/* ---------------- Config: change only these if needed ---------------- */
+/* ---------------- Config ---------------- */
 const recipientName = 'Maneesha';
 const portraitDataURI = ""; // optional: paste full data:image/... base64 if you want single-file
-const portraitLocalPath = "./image.jpg"; // the filename you uploaded at repo root
-/* ------------------------------------------------------------------- */
-
+const portraitLocalPath = "./image.jpg"; // image at repo root
 document.getElementById('namePlace').textContent = recipientName;
 
-/* ---------------- Portrait loading with fallback ---------------- */
+/* ---------------- Portrait loading ---------------- */
 const portraitImg = document.getElementById('portraitImg');
 const portraitPlaceholder = document.getElementById('portraitPlaceholder');
-
 function setPortrait(src){
   portraitPlaceholder.style.display = 'none';
   portraitImg.style.display = 'block';
@@ -121,67 +118,22 @@ function setPortrait(src){
     portraitPlaceholder.style.display = 'flex';
   };
 }
-
-if(portraitDataURI && portraitDataURI.startsWith('data:')){
-  setPortrait(portraitDataURI);
-} else {
-  setPortrait(portraitLocalPath);
-}
+if(portraitDataURI && portraitDataURI.startsWith('data:')) setPortrait(portraitDataURI);
+else setPortrait(portraitLocalPath);
 
 /* ---------------- Confetti ---------------- */
 const confCanvas = document.getElementById('confettiCanvas');
 const ctx = confCanvas.getContext('2d');
 let dpr = window.devicePixelRatio || 1;
-function resizeCanvas(){
-  dpr = window.devicePixelRatio || 1;
-  confCanvas.width = innerWidth * dpr;
-  confCanvas.height = innerHeight * dpr;
-  confCanvas.style.width = innerWidth + 'px';
-  confCanvas.style.height = innerHeight + 'px';
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-}
+function resizeCanvas(){ dpr = window.devicePixelRatio || 1; confCanvas.width = innerWidth * dpr; confCanvas.height = innerHeight * dpr; confCanvas.style.width = innerWidth + 'px'; confCanvas.style.height = innerHeight + 'px'; ctx.setTransform(dpr,0,0,dpr,0,0); }
 resizeCanvas(); window.addEventListener('resize', resizeCanvas);
 
 let confetti = [];
-function spawnConfetti(n=140){
-  for(let i=0;i<n;i++){
-    confetti.push({
-      x: Math.random()*innerWidth,
-      y: -Math.random()*200,
-      w: 6 + Math.random()*14,
-      h: 4 + Math.random()*8,
-      vx: -2 + Math.random()*4,
-      vy: 2 + Math.random()*6,
-      ang: Math.random()*Math.PI*2,
-      vr: (-0.06 + Math.random()*0.12),
-      color: ['#2FBF91','#FFD66B','#FFB86B','#72E0FF','#C2F7FF'][Math.floor(Math.random()*5)]
-    });
-  }
-}
+function spawnConfetti(n=140){ for(let i=0;i<n;i++){ confetti.push({ x: Math.random()*innerWidth, y: -Math.random()*200, w: 6 + Math.random()*14, h: 4 + Math.random()*8, vx: -2 + Math.random()*4, vy: 2 + Math.random()*6, ang: Math.random()*Math.PI*2, vr: (-0.06 + Math.random()*0.12), color: ['#2FBF91','#FFD66B','#FFB86B','#72E0FF','#C2F7FF'][Math.floor(Math.random()*5)] }); } }
 let confRunning = false;
-function updateDrawConfetti(){
-  ctx.clearRect(0,0,confCanvas.width,confCanvas.height);
-  for(let p of confetti){
-    p.x += p.vx; p.y += p.vy; p.ang += p.vr;
-    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ang);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-    ctx.restore();
-  }
-  confetti = confetti.filter(p => p.y < innerHeight + 120);
-}
-function confettiLoop(){
-  if(!confRunning) return;
-  updateDrawConfetti();
-  requestAnimationFrame(confettiLoop);
-}
-function startConfetti(){
-  if(confRunning) return;
-  confRunning = true;
-  spawnConfetti(180);
-  confettiLoop();
-  setTimeout(()=>{ confRunning=false; confetti=[]; ctx.clearRect(0,0,confCanvas.width,confCanvas.height); }, 7000);
-}
+function updateDrawConfetti(){ ctx.clearRect(0,0,confCanvas.width,confCanvas.height); for(let p of confetti){ p.x += p.vx; p.y += p.vy; p.ang += p.vr; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ang); ctx.fillStyle = p.color; ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h); ctx.restore(); } confetti = confetti.filter(p => p.y < innerHeight + 120); }
+function confettiLoop(){ if(!confRunning) return; updateDrawConfetti(); requestAnimationFrame(confettiLoop); }
+function startConfetti(){ if(confRunning) return; confRunning = true; spawnConfetti(180); confettiLoop(); setTimeout(()=>{ confRunning=false; confetti=[]; ctx.clearRect(0,0,confCanvas.width,confCanvas.height); }, 7000); }
 
 /* ---------------- Smoke ---------------- */
 const cakeCard = document.getElementById('cakeCard');
@@ -210,101 +162,93 @@ function makeSmokeBurst(count=7){
   }
 }
 
-/* ---------------- WebAudio: louder richer "Happy Birthday" ---------------- */
+/* ---------------- WebAudio (fixed: no buzz, smooth fades) ---------------- */
 let audioCtx = null;
 let mainGain = null;
 let musicLooping = false;
+let loopTimeout = null;
 
-// create audio context on first user gesture
 function createAudioIfNeeded(){
   if(!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     mainGain = audioCtx.createGain();
-    mainGain.gain.value = 0.18; // master volume (feel free to reduce)
+    mainGain.gain.value = 0.14; // safe master level
     mainGain.connect(audioCtx.destination);
   }
 }
 
-// helper to play a note (osc with envelope)
-function playNote(freq, start, dur, type='sine', gain=0.6){
+// safer note play with smooth ramps and cleanup
+function playNote(freq, start, dur, type='sine', amp=0.6){
   const o = audioCtx.createOscillator();
   const g = audioCtx.createGain();
   o.type = type;
   o.frequency.setValueAtTime(freq, start);
+
+  // start tiny value to avoid clicks
   g.gain.setValueAtTime(0.00001, start);
-  g.gain.linearRampToValueAtTime(gain*0.8, start + 0.02);
+  g.gain.linearRampToValueAtTime(amp * 0.85, start + 0.02);
+  // gentle decay
   g.gain.exponentialRampToValueAtTime(0.00001, start + dur*0.9 + 0.02);
-  o.connect(g);
-  // small filter for warmth
-  const f = audioCtx.createBiquadFilter();
-  f.type = 'lowpass'; f.frequency.value = Math.max(1200, freq*4);
-  g.connect(f); f.connect(mainGain);
-  o.start(start); o.stop(start + dur + 0.06);
+
+  // mild lowpass for warmth and to prevent harshness
+  const filt = audioCtx.createBiquadFilter();
+  filt.type = 'lowpass';
+  filt.frequency.setValueAtTime(Math.max(1200, freq * 4), start);
+
+  o.connect(g); g.connect(filt); filt.connect(mainGain);
+  o.start(start);
+  // schedule stop slightly after gain goes to near zero
+  o.stop(start + dur + 0.06);
+
+  // cleanup after stop
+  o.onended = () => { try{ o.disconnect(); g.disconnect(); filt.disconnect(); }catch(e){} };
 }
 
-// play the melody (happy birthday) with a warm pad underneath
+// improved happy birthday with sine pad (no sawtooth) and smooth fades
 function playHappyBirthday(atTime = null){
   createAudioIfNeeded();
   const now = atTime || audioCtx.currentTime + 0.02;
 
-  // pad: long triangle with slow attack
+  // pad: use sine wave (smooth) with fade-in and fade-out
   const padOsc = audioCtx.createOscillator();
   const padGain = audioCtx.createGain();
-  padOsc.type = 'sawtooth';
-  padOsc.frequency.value = 110; // A2-ish
-  padGain.gain.value = 0.06;
+  padOsc.type = 'sine'; // changed from sawtooth -> sine removes buzz
+  padOsc.frequency.value = 110;
+  // very small starting gain to avoid click
+  padGain.gain.setValueAtTime(0.00001, now);
+  // ramp to target
+  padGain.gain.linearRampToValueAtTime(0.045, now + 0.22);
+  // schedule gentle fade down at end
+  padGain.gain.linearRampToValueAtTime(0.00001, now + 6.0);
+
+  // pad filter to remove high harmonics
   const padFilter = audioCtx.createBiquadFilter(); padFilter.type='lowpass'; padFilter.frequency.value=900;
-  padOsc.connect(padFilter); padFilter.connect(mainGain);
-  padOsc.start(now); padOsc.stop(now + 6.5);
+  padOsc.connect(padFilter); padFilter.connect(padGain); padGain.connect(mainGain);
 
-  // melody frequencies approximate (in Hz) - "Happy Birthday" phrase
-  // sequence derived to sound recognizably like "Happy Birthday"
+  padOsc.start(now);
+  padOsc.stop(now + 6.3);
+  padOsc.onended = ()=> { try{ padOsc.disconnect(); padFilter.disconnect(); padGain.disconnect(); }catch(e){}; };
+
+  // melody notes (same mapping as before)
   const notes = [
-    {f:392,d:0.34}, // G4
-    {f:392,d:0.34}, // G4
-    {f:440,d:0.7},  // A4
-    {f:392,d:0.7},  // G4
-    {f:523.25,d:0.7},// C5
-    {f:494,d:1.0},  // B4
-
-    {f:392,d:0.34},
-    {f:392,d:0.34},
-    {f:440,d:0.7},
-    {f:392,d:0.7},
-    {f:587.33,d:0.7}, // D5
-    {f:523.25,d:1.0},
-
-    {f:392,d:0.34},
-    {f:392,d:0.34},
-    {f:784,d:0.7},   // G5
-    {f:523.25,d:0.7},
-    {f:494,d:0.7},
-    {f:440,d:1.0},
-
-    {f:659.25,d:0.34},
-    {f:659.25,d:0.34},
-    {f:523.25,d:0.7},
-    {f:392,d:0.7},
-    {f:587.33,d:0.7},
-    {f:523.25,d:1.2}
+    {f:392,d:0.34}, {f:392,d:0.34}, {f:440,d:0.7}, {f:392,d:0.7}, {f:523.25,d:0.7}, {f:494,d:1.0},
+    {f:392,d:0.34}, {f:392,d:0.34}, {f:440,d:0.7}, {f:392,d:0.7}, {f:587.33,d:0.7}, {f:523.25,d:1.0},
+    {f:392,d:0.34}, {f:392,d:0.34}, {f:784,d:0.7}, {f:523.25,d:0.7}, {f:494,d:0.7}, {f:440,d:1.0},
+    {f:659.25,d:0.34}, {f:659.25,d:0.34}, {f:523.25,d:0.7}, {f:392,d:0.7}, {f:587.33,d:0.7}, {f:523.25,d:1.2}
   ];
 
-  // play notes with a bright lead (square+triangle mix)
   let t = now + 0.08;
   for(const n of notes){
-    // primary
-    playNote(n.f, t, n.d, 'triangle', 0.8);
-    // slight octave fattening
-    playNote(n.f*2, t, n.d*0.9, 'square', 0.08);
+    // lead: triangle (mellow) instead of square to keep it clean
+    playNote(n.f, t, n.d, 'triangle', 0.85);
+    // light octave reinforcement with very low level
+    playNote(n.f*2, t, n.d*0.9, 'triangle', 0.07);
     t += n.d * 0.98;
   }
-
-  // return end time
   return t;
 }
 
-// looped playback used by Play button
-let loopTimeout = null;
+// loop helpers
 function startMusicLoop(){
   if(musicLooping) return;
   musicLooping = true;
@@ -338,7 +282,6 @@ function extinguishFlame(){
 }
 function showWishMessage(){
   surpriseArea.classList.add('show');
-  // small focus for accessibility
   surpriseArea.setAttribute('tabindex','-1'); surpriseArea.focus({preventScroll:true});
 }
 
@@ -347,36 +290,28 @@ async function blowSequence(){
   blowing = true;
   cakeCard.setAttribute('aria-pressed','true');
   cakePrompt.textContent = 'Blowing — make a wish!';
-  // stronger puff sound
+  // smooth puff
   try{
     createAudioIfNeeded();
     const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    o.type='sine'; o.frequency.value=1200; g.gain.value=0.002;
+    o.type='sine'; o.frequency.value=1200;
+    g.gain.setValueAtTime(0.00001, audioCtx.currentTime);
+    g.gain.linearRampToValueAtTime(0.06, audioCtx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.28);
     o.connect(g); g.connect(mainGain);
-    g.gain.exponentialRampToValueAtTime(0.08, audioCtx.currentTime + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.26);
-    o.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.26);
-    o.start(); o.stop(audioCtx.currentTime + 0.28);
+    o.start(); o.stop(audioCtx.currentTime + 0.30);
+    o.onended = ()=> { try{ o.disconnect(); g.disconnect(); }catch(e){}; };
   }catch(e){ console.warn('Audio not available:', e); }
 
-  // visual extinguish & jiggle
   extinguishFlame();
-  cakeCard.animate([
-    { transform:'translateY(0)' },
-    { transform:'translateY(-10px) rotate(-6deg)' },
-    { transform:'translateY(0) rotate(3deg)' }
-  ], { duration:460, iterations:3, easing:'ease-in-out' });
+  cakeCard.animate([{ transform:'translateY(0)' }, { transform:'translateY(-10px) rotate(-6deg)' }, { transform:'translateY(0) rotate(3deg)' }], { duration:460, iterations:3, easing:'ease-in-out' });
 
-  // smoke
   makeSmokeBurst(9);
 
-  // after small dramatic delay reveal confetti + music + wish
   setTimeout(()=>{
     startConfetti();
-    // play full Happy Birthday melody (louder)
     try{ createAudioIfNeeded(); playHappyBirthday(); }catch(e){ console.warn(e); }
-    // reveal wish
     showWishMessage();
     cakePrompt.textContent = 'Wish made! ✨ (Refresh to replay)';
     hasBlown = true; blowing = false;
@@ -384,13 +319,11 @@ async function blowSequence(){
 }
 
 /* ---------------- Event wiring ---------------- */
-// flame hit large button
 flameHit.addEventListener('click', (e)=>{ e.stopPropagation(); blowSequence(); });
 cakeCard.addEventListener('click', ()=> blowSequence());
-// keyboard B
 window.addEventListener('keydown', (e)=>{ if(e.key && e.key.toLowerCase()==='b') blowSequence(); });
 
-// Play/Stop music button
+/* Play/Stop music button */
 const playBtn = document.getElementById('playBtn');
 playBtn.addEventListener('click', ()=>{
   createAudioIfNeeded();
@@ -421,7 +354,6 @@ downloadBtn.addEventListener('click', async ()=>{
   }
 });
 
-/* console info */
 console.log("Birthday page loaded. portraitDataURI length:", portraitDataURI.length, "Using local path:", portraitLocalPath);
 </script>
 </body>
