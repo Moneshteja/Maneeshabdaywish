@@ -6,68 +6,41 @@
 <title>Happy Birthday — Maneesha 🎉</title>
 <style>
   :root{
-    --bg1: #E8FFFB; /* pale mint */
-    --bg2: #D7FFF2;
-    --accent: #2FBF91; /* mint accent */
-    --warm: #FFD66B; /* confetti accent */
-    --card: rgba(255,255,255,0.9);
-    --text: #21312B;
+    --bg1:#E8FFFB; --bg2:#D7FFF2; --accent:#2FBF91; --text:#21312B; --card:#ffffffdd;
   }
-  html,body{height:100%;}
-  body{
-    margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
-    background: linear-gradient(160deg,var(--bg1), var(--bg2));
-    display:flex; align-items:center; justify-content:center; padding:28px;
-    color:var(--text);
-  }
-  .stage{
-    width:min(980px,94vw); background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.86));
-    border-radius:18px; box-shadow: 0 18px 40px rgba(16,40,30,0.08);
-    display:grid; grid-template-columns:1fr 380px; gap:18px; padding:20px; align-items:center; position:relative;
-  }
-  @media (max-width:840px){ .stage{grid-template-columns:1fr; padding:16px;} .side{order:-1} }
+  html,body{height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+  body{display:flex; align-items:center; justify-content:center; background:linear-gradient(160deg,var(--bg1),var(--bg2)); padding:24px; color:var(--text);}
+  .stage{width:min(980px,96vw); background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); border-radius:18px; box-shadow:0 18px 40px rgba(10,40,30,0.06); padding:20px; display:grid; grid-template-columns:1fr 380px; gap:16px; position:relative;}
+  @media(max-width:840px){ .stage{grid-template-columns:1fr} .side{order:-1} }
 
-  /* left content */
-  .left{padding:10px 6px}
-  h1{font-size:clamp(20px,3.6vw,32px); margin:6px 0 8px;}
-  .sub{color:#3b5b50; margin-bottom:12px}
-  .card-text{background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4)); padding:12px; border-radius:12px; border:1px solid rgba(0,0,0,0.04);}
-  .controls{margin-top:12px; display:flex; gap:8px; flex-wrap:wrap}
-  button{appearance:none; border:0; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:600}
-  .btn-muted{background:transparent; border:1px solid rgba(0,0,0,0.06)}
-  .surprise{margin-top:12px; padding:12px; border-radius:12px; background:rgba(255,255,255,0.6); border:1px dashed rgba(0,0,0,0.05); display:none}
-  .surprise.show{display:block}
-  .small{font-size:13px; color:#4a6b60}
+  .left{padding:6px}
+  h1{margin:6px 0 8px; font-size:clamp(20px,3.6vw,32px)}
+  .sub{color:#3b5b50; margin-bottom:10px}
+  .card-text{background:var(--card); padding:12px; border-radius:12px; border:1px solid rgba(0,0,0,0.04)}
+  .controls{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap}
+  button{appearance:none;border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600;background:transparent;border:1px solid rgba(0,0,0,0.06)}
+  .note{font-size:13px;color:#516c61;margin-top:10px}
 
-  /* side portrait & cake */
-  .side{display:flex; align-items:center; justify-content:center; gap:12px}
-  .portrait{
-    width:320px; height:320px; border-radius:16px; overflow:hidden; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg,#fff, #f6fff9); position:relative; box-shadow: 0 8px 24px rgba(18,36,28,0.06); border:1px solid rgba(255,255,255,0.6)
-  }
-  .portrait img{width:100%; height:100%; object-fit:cover; display:block}
+  .side{display:flex;align-items:center;justify-content:center}
+  .portrait{width:320px;height:320px;border-radius:16px;overflow:hidden;background:linear-gradient(180deg,#fff,#f6fff9);position:relative;box-shadow:0 8px 24px rgba(18,36,28,0.06);border:1px solid rgba(255,255,255,0.6)}
+  .portrait img{width:100%;height:100%;object-fit:cover;display:block}
+  .portrait .placeholder{display:flex;align-items:center;justify-content:center;height:100%;color:#617f73;font-weight:700;font-size:20px}
 
-  /* cake wrap */
-  .cake-wrap{position:absolute; right:18px; bottom:18px; width:150px; height:150px; display:flex; align-items:center; justify-content:center}
-  .cake-btn{width:150px; height:150px; display:flex; align-items:center; justify-content:center; border-radius:14px; background:linear-gradient(180deg,#fff,#f9fffa); box-shadow: 0 10px 30px rgba(12,30,20,0.06); cursor:pointer; border:1px solid rgba(0,0,0,0.03);}
-  .cake-svg{width:120px;height:120px}
-  .prompt{position:absolute; bottom:-34px; left:50%; transform:translateX(-50%); background:white; padding:8px 10px; border-radius:999px; box-shadow:0 8px 18px rgba(0,0,0,0.07); font-weight:600; font-size:13px}
+  /* cake */
+  .cake-wrap{position:absolute; right:18px; bottom:18px; width:150px; height:150px; display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .cake-card{width:150px;height:150px;border-radius:14px;background:linear-gradient(180deg,#fff,#f9fffa);box-shadow:0 10px 30px rgba(12,30,20,0.05);pointer-events:auto;display:flex;align-items:center;justify-content:center;position:relative;border:1px solid rgba(0,0,0,0.03)}
+  .prompt{position:absolute; bottom:-36px; left:50%; transform:translateX(-50%); background:white;padding:8px 10px;border-radius:999px; box-shadow:0 8px 18px rgba(0,0,0,0.06); font-weight:600; font-size:13px}
+  /* make an invisible larger hit area for mobile */
+  .flame-hit{position:absolute; width:64px; height:64px; left:50%; top:18%; transform:translateX(-50%); border-radius:50%; background:transparent; cursor:pointer; pointer-events:auto;}
 
-  /* flame */
   .flame{transform-origin:center bottom; animation:flame-flicker 900ms infinite}
   @keyframes flame-flicker{0%{transform:scaleY(1)}50%{transform:scaleY(.92)}100%{transform:scaleY(1)}}
-  .flame.extinguished{animation:none; transform:scaleY(0.02) translateY(8px); opacity:0; transition:transform .48s ease, opacity .42s ease}
+  .extinguished{animation:none; transform:scaleY(0.02) translateY(8px); opacity:0; transition:transform .48s ease, opacity .42s ease}
 
-  /* cake jiggle */
-  .jiggle{animation:jiggle 420ms ease-in-out 3}
-  @keyframes jiggle{0%{transform:translateY(0)}25%{transform:translateY(-8px) rotate(-3deg)}50%{transform:translateY(0) rotate(2deg)}75%{transform:translateY(-4px) rotate(-1deg)}100%{transform:translateY(0)}}
+  /* smoke */
+  .smoke{position:fixed; border-radius:50%; pointer-events:none; mix-blend-mode:screen}
 
-  /* smoke (created in JS) */
-  .smoke{position:fixed; background:rgba(200,200,200,0.9); border-radius:50%; pointer-events:none; mix-blend-mode:screen}
-
-  /* confetti canvas */
   canvas.confetti{position:fixed; left:0; top:0; width:100vw; height:100vh; pointer-events:none; z-index:9999}
-
-  .note{font-size:13px;color:#516c61;margin-top:10px}
 </style>
 </head>
 <body>
@@ -81,34 +54,33 @@
       <div class="card-text" id="shortCard">Wishing you a day of laughter, tiny adventures, and warm tea on cozy afternoons.</div>
 
       <div class="controls">
-        <button id="playBtn" class="btn-muted">▶️ Play/Stop Music</button>
-        <button id="downloadBtn" class="btn-muted">📷 Save Portrait</button>
+        <button id="playBtn">▶️ Play/Stop Music</button>
+        <button id="downloadBtn">📷 Save Portrait</button>
       </div>
 
-      <div class="surprise" id="surpriseArea" aria-live="polite">
-        <h3 style="margin:6px 0 8px 0">Happy Birthday, my dear friend.</h3>
-        <p id="finalMsg" class="small">You and I have always been like bread and jam — inseparable, steady, and full of quiet sweetness. Thank you for understanding my heart without words. I’m endlessly grateful for you. Wishing you a year as gentle, beautiful, and warm as you are. 💛✨</p>
-      </div>
-      <div class="note">Tip: press <strong>B</strong> to blow the candle.</div>
+      <div class="note">Tip: press <strong>B</strong> to blow the candle. Page refresh allows one more blow.</div>
     </section>
 
-    <aside class="side" aria-hidden="false">
+    <aside class="side">
       <figure class="portrait" role="img" aria-label="Photo of Maneesha">
-        <!-- portrait (embedded from provided base64) -->
-        <img id="portraitImg" alt="Maneesha portrait">
-        <!-- cake in corner -->
+        <img id="portraitImg" alt="Maneesha portrait" crossorigin="anonymous" />
+        <div class="placeholder" id="portraitPlaceholder" style="display:none">Maneesha</div>
+
         <div class="cake-wrap" id="cakeWrap">
-          <div class="cake-btn" id="cakeBtn" tabindex="0" role="button" aria-pressed="false" aria-label="Cake with candle. Click the candle to blow it.">
-            <!-- simple cake svg. flameGroup is the click target -->
-            <svg class="cake-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <div class="cake-card" id="cakeCard" role="button" aria-pressed="false" aria-label="Cake with candle. Click to blow.">
+            <!-- cake SVG -->
+            <svg class="cake-svg" viewBox="0 0 64 64" width="120" height="120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <rect x="8" y="28" width="48" height="18" rx="3" fill="#FFF9EE" stroke="#F3E7D6"/>
               <path d="M8 28c6-6 18-6 26-1 8-5 20-5 26 1" fill="#FFEEE9"/>
               <rect x="26" y="20" width="4" height="10" rx="0.6" fill="#FFFFFF" stroke="#FFEFCB"/>
-              <g id="flameGroup" style="cursor:pointer">
+              <g id="flameGroup" transform="translate(0,0)">
                 <path id="flame" class="flame" d="M32 16c0 2.6-2 3.8-2 3.8s0-2 0-3.8 1-2.4 2-2.4 1 0.6 1 2.4z" fill="#FFD66B"/>
                 <path id="flameInner" class="flame" d="M32 17c0 1.6-1 2.2-1 2.2s0-1 0-2.2 0.6-1.2 1-1.2 1 0.2 1 1.2z" fill="#FFB86B" opacity="0.95"/>
               </g>
             </svg>
+
+            <!-- large invisible hit area (better for mobile) -->
+            <button class="flame-hit" id="flameHit" aria-label="Blow the candle" title="Click to blow the candle"></button>
           </div>
           <div class="prompt" id="cakePrompt">Click the candle to blow it 💨</div>
         </div>
@@ -117,149 +89,250 @@
   </main>
 
 <script>
-/* ==================== Configuration ==================== */
+/* ---------------- Configuration ---------------- */
 const recipientName = 'Maneesha';
-
-/* ------------------ PORTRAIT: embedded base64 ------------------
-   The portrait below is set from the base64 string you provided.
-   If you later want to replace it with another data URI or local file,
-   change portraitSrc accordingly.
-------------------------------------------------------------------*/
-const portraitSrc = "data:image/jpeg;base64,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...
-/* truncated in this display - the full base64 you supplied is used in the file above */
-";
-
-/* apply name & portrait */
 document.getElementById('namePlace').textContent = recipientName;
+
+/*
+ portraitDataURI: if you want single-file, paste your full base64 data URI here (VERY LONG).
+ Example:
+   const portraitDataURI = "data:image/jpeg;base64,/9j/4AAQSkZJRgA...";
+ If you leave it blank the script will fallback to ./image.jpg (repo root).
+*/
+const portraitDataURI = ""; // <-- leave empty (we use ./image.jpg) or paste full data URI string
+
+// fallback path (repo root — same folder as index.html)
+const portraitLocalPath = "./image.jpg";
+
+/* ---------------- DOM refs ---------------- */
 const portraitImg = document.getElementById('portraitImg');
-portraitImg.src = portraitSrc;
+const portraitPlaceholder = document.getElementById('portraitPlaceholder');
+const flame = document.getElementById('flame');
+const flameInner = document.getElementById('flameInner');
+const flameHit = document.getElementById('flameHit');
+const cakeCard = document.getElementById('cakeCard');
+const cakePrompt = document.getElementById('cakePrompt');
+const playBtn = document.getElementById('playBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const confCanvas = document.getElementById('confettiCanvas');
+
+let hasBlown = false;
+let audioCtx = null;
+let playLooping = false;
+
+/* ---------------- Portrait loading with fallback ---------------- */
+function setPortrait(src){
+  portraitPlaceholder.style.display = 'none';
+  portraitImg.style.display = 'block';
+  portraitImg.src = src;
+  portraitImg.onerror = () => {
+    console.warn("Portrait failed to load:", src);
+    portraitImg.style.display = 'none';
+    portraitPlaceholder.style.display = 'flex';
+  };
+}
+
+if(portraitDataURI && portraitDataURI.startsWith('data:')){
+  setPortrait(portraitDataURI);
+} else {
+  setPortrait(portraitLocalPath);
+}
 
 /* ---------------- Confetti (lightweight) ---------------- */
-const confCanvas = document.getElementById('confettiCanvas');
 let dpr = window.devicePixelRatio || 1;
-confCanvas.width = innerWidth * dpr; confCanvas.height = innerHeight * dpr;
-confCanvas.style.width = innerWidth + 'px'; confCanvas.style.height = innerHeight + 'px';
-const cctx = confCanvas.getContext('2d'); cctx.setTransform(dpr,0,0,dpr,0,0);
+function resizeCanvas(){
+  dpr = window.devicePixelRatio || 1;
+  confCanvas.width = innerWidth * dpr;
+  confCanvas.height = innerHeight * dpr;
+  confCanvas.style.width = innerWidth + 'px';
+  confCanvas.style.height = innerHeight + 'px';
+  const ctx = confCanvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-let confettiParticles = [];
-function spawnConfetti(n=140){
+const ctx = confCanvas.getContext('2d');
+let confetti = [];
+function spawnConfetti(n=100){
   for(let i=0;i<n;i++){
-    confettiParticles.push({
+    confetti.push({
       x: Math.random()*innerWidth,
-      y: -20 - Math.random()*innerHeight*0.2,
-      size: 6 + Math.random()*10,
-      speedY: 2 + Math.random()*6,
-      speedX: -2 + Math.random()*4,
-      angle: Math.random()*Math.PI*2,
-      rotate: (-0.04 + Math.random()*0.08),
+      y: -Math.random()*200,
+      w: 6 + Math.random()*12,
+      h: 4 + Math.random()*6,
+      vx: -1 + Math.random()*2,
+      vy: 2 + Math.random()*6,
+      ang: Math.random()*Math.PI*2,
+      vr: (-0.05 + Math.random()*0.1),
       color: ['#2FBF91','#FFD66B','#FFB86B','#72E0FF','#C2F7FF'][Math.floor(Math.random()*5)]
     });
   }
 }
-function updateConfetti(dt){
-  for(let p of confettiParticles){
-    p.y += p.speedY * dt * 0.06;
-    p.x += p.speedX * dt * 0.06;
-    p.angle += p.rotate * dt * 0.06;
-    if(p.y > innerHeight + 40){ Object.assign(p, {x:Math.random()*innerWidth, y:-20, speedY:2+Math.random()*6}); }
+let confRunning = false;
+function updateDrawConfetti(){
+  ctx.clearRect(0,0,confCanvas.width,confCanvas.height);
+  for(let p of confetti){
+    p.x += p.vx; p.y += p.vy; p.ang += p.vr;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.ang);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+    ctx.restore();
   }
+  confetti = confetti.filter(p => p.y < innerHeight + 100);
 }
-function drawConfetti(){
-  cctx.clearRect(0,0,confCanvas.width,confCanvas.height);
-  for(let p of confettiParticles){
-    cctx.save(); cctx.translate(p.x,p.y); cctx.rotate(p.angle);
-    cctx.fillStyle = p.color; cctx.fillRect(-p.size/2, -p.size/2, p.size, Math.max(2,p.size*0.6)); cctx.restore();
-  }
+function confettiLoop(){
+  if(!confRunning) return;
+  updateDrawConfetti();
+  requestAnimationFrame(confettiLoop);
 }
-let confettiRunning = false; let confLast = 0;
-function confettiLoop(now){ if(!confettiRunning) return; const dt = now - (confLast||now); confLast = now; updateConfetti(dt); drawConfetti(); requestAnimationFrame(confettiLoop); }
-function startConfetti(){ if(confettiRunning) return; confettiRunning = true; spawnConfetti(140); confLast = performance.now(); requestAnimationFrame(confettiLoop); setTimeout(()=>stopConfetti(), 7000); }
-function stopConfetti(){ confettiRunning = false; confettiParticles = []; cctx.clearRect(0,0,confCanvas.width,confCanvas.height); }
+function startConfetti(){
+  if(confRunning) return;
+  confRunning = true; spawnConfetti(140); confettiLoop();
+  setTimeout(()=>{ confRunning=false; confetti=[]; ctx.clearRect(0,0,confCanvas.width,confCanvas.height); }, 7000);
+}
 
-/* ---------------- Smoke & blow sequence ---------------- */
-const flame = document.getElementById('flame');
-const flameInner = document.getElementById('flameInner');
-const flameGroup = document.getElementById('flameGroup');
-const cakeBtn = document.getElementById('cakeBtn');
-const cakePrompt = document.getElementById('cakePrompt');
-const surpriseArea = document.getElementById('surpriseArea');
-
-let hasBlown = false; let isBlowing = false;
-
-function makeSmokeBurst(count=7){
+/* ---------------- Smoke effect ---------------- */
+function makeSmokeBurst(count=6){
   for(let i=0;i<count;i++){
     setTimeout(()=>{
-      const s = document.createElement('div'); s.className='smoke';
-      const size = 12 + Math.random()*28; s.style.width=size+'px'; s.style.height=size+'px';
-      const rect = cakeBtn.getBoundingClientRect();
-      const left = rect.left + rect.width/2 + (Math.random()*40-20) - size/2;
+      const s = document.createElement('div');
+      s.className = 'smoke';
+      const size = 12 + Math.random()*36;
+      s.style.width = s.style.height = size + 'px';
+      const rect = cakeCard.getBoundingClientRect();
+      const left = rect.left + rect.width/2 + (Math.random()*60-30) - size/2;
       const top = rect.top + rect.height*0.15 - size/2;
-      s.style.left = left+'px'; s.style.top = top+'px'; s.style.opacity = '0.9';
+      s.style.left = left + 'px'; s.style.top = top + 'px';
+      s.style.opacity = 0.95;
       s.style.background = 'radial-gradient(circle, rgba(200,200,200,0.95), rgba(180,180,180,0.25))';
       document.body.appendChild(s);
-      const driftX = (-30 + Math.random()*60);
-      const rise = -120 - Math.random()*60;
+      const driftX = (-40 + Math.random()*80);
+      const rise = -110 - Math.random()*80;
       s.animate([
-        { transform: 'translate(0px,0px) scale(0.6)', opacity: 0.95 },
-        { transform: `translate(${driftX}px, ${rise/2}px) scale(1.05)`, opacity: 0.6 },
-        { transform: `translate(${driftX*1.2}px, ${rise}px) scale(1.4)`, opacity: 0.12 }
-      ], { duration: 900 + Math.random()*500, easing: 'cubic-bezier(.2,.7,.2,1)' }).onfinish = ()=> s.remove();
+        { transform:'translate(0,0) scale(0.6)', opacity:0.95 },
+        { transform:`translate(${driftX}px, ${rise/2}px) scale(1.05)`, opacity:0.6 },
+        { transform:`translate(${driftX*1.2}px, ${rise}px) scale(1.4)`, opacity:0.08 }
+      ], { duration:900 + Math.random()*600, easing:'ease-out' }).onfinish = ()=> s.remove();
     }, i*80);
   }
 }
 
-/* WebAudio: birdsy birthday jingle (synthesized) */
-let audioCtx = null;
-let jingleNodes = [];
-let jinglePlaying = false;
-
-function createAudioContext(){
+/* ---------------- Audio (birdsy jingle) ---------------- */
+function ensureAudio(){
   if(!audioCtx){
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
 }
-function playBirdsyJingle(loop=false){
-  createAudioContext();
-  if(jinglePlaying) return;
-  jinglePlaying = true;
+function playBirdsyJingleOnce(){
+  ensureAudio();
   const now = audioCtx.currentTime;
-
-  // simple "bird chirp" sequence + soft plucky backup
-  const notes = [ 880, 1320, 990, 1320, 1760 ];
+  const notes = [880, 1320, 990, 1320, 1760];
   const durations = [0.12,0.12,0.14,0.16,0.28];
 
-  // background pad
+  // pad
   const pad = audioCtx.createOscillator();
   const padGain = audioCtx.createGain();
-  pad.type = 'sine';
-  pad.frequency.value = 220;
-  padGain.gain.value = 0.0008;
+  pad.type='sine'; pad.frequency.value=220; padGain.gain.value=0.0008;
   pad.connect(padGain); padGain.connect(audioCtx.destination);
   pad.start(now); pad.stop(now + 5.5);
-  jingleNodes.push(pad, padGain);
 
-  // pluck
-  const pluckGain = audioCtx.createGain();
-  pluckGain.gain.value = 0.0009;
-  const pluckFilter = audioCtx.createBiquadFilter();
-  pluckFilter.type = 'lowpass'; pluckFilter.frequency.value = 1800;
-  pluckFilter.Q.value = 0.7;
-  pluckGain.connect(pluckFilter); pluckFilter.connect(audioCtx.destination);
-  jingleNodes.push(pluckGain, pluckFilter);
-
+  // chirps
   let t = now + 0.02;
   for(let i=0;i<notes.length;i++){
-    const osc = audioCtx.createOscillator();
+    const o = audioCtx.createOscillator();
     const g = audioCtx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.value = notes[i];
-    g.gain.value = 0.0001;
+    o.type='triangle'; o.frequency.value = notes[i];
     g.gain.setValueAtTime(0.00001, t);
-    g.gain.exponentialRampToValueAtTime(0.0025, t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.00001, t + durations[i]);
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.start(t); osc.stop(t + durations[i] + 0.06);
-    jingleNodes.push(osc, g);
+    g.gain.exponentialRampToValueAtTime(0.0025, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.00001, t+durations[i]);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + durations[i] + 0.06);
+    t += durations[i] + 0.06;
+  }
+}
 
-    const noiseOsc = audioCtx.createOscillator();
-    const noiseGain = au
+/* ---------------- Blow sequence (one-time) ---------------- */
+let blowing = false;
+async function blowSequence(){
+  if(hasBlown || blowing) return;
+  blowing = true;
+  cakeCard.setAttribute('aria-pressed','true');
+  cakePrompt.textContent = 'Blowing... Make a wish!';
+  try{
+    ensureAudio();
+    // little puff sound
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type='triangle'; o.frequency.value=1500; g.gain.value=0.0006;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(); g.gain.exponentialRampToValueAtTime(0.02, audioCtx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.22);
+    o.frequency.exponentialRampToValueAtTime(700, audioCtx.currentTime + 0.22);
+    o.stop(audioCtx.currentTime + 0.26);
+  }catch(e){ console.warn("Audio not available yet:", e); }
+
+  // extinguish flame (toggle class)
+  if(flame) flame.classList.add('extinguished');
+  if(flameInner) flameInner.classList.add('extinguished');
+
+  // jiggle effect (apply quick transform)
+  cakeCard.animate([{ transform:'translateY(0)' }, { transform:'translateY(-8px) rotate(-3deg)' }, { transform:'translateY(0) rotate(2deg)' }], { duration:420, iterations:3, easing:'ease-in-out' });
+
+  // smoke
+  makeSmokeBurst(7);
+
+  // after dramatic delay reveal confetti + jingle + mark as blown
+  setTimeout(()=>{
+    startConfetti();
+    playBirdsyJingleOnce();
+    cakePrompt.textContent = 'Wish made! ✨ (Refresh to replay once)';
+    hasBlown = true;
+    blowing = false;
+  }, 1700);
+}
+
+/* ---------------- Event wiring ---------------- */
+// make flame hit area clickable
+flameHit.addEventListener('click', (e)=>{ e.stopPropagation(); blowSequence(); });
+cakeCard.addEventListener('click', ()=> blowSequence());
+// keyboard B
+window.addEventListener('keydown', (e)=> { if(e.key && e.key.toLowerCase()==='b') blowSequence(); });
+
+/* Play/Stop music - loops short jingle (works after a user gesture) */
+playBtn.addEventListener('click', ()=>{
+  ensureAudio();
+  if(!playLooping){
+    playLooping = true; playBtn.textContent = '⏸ Stop Music';
+    (function loopOnce(){
+      if(!playLooping) return;
+      playBirdsyJingleOnce();
+      setTimeout(()=>{ if(playLooping) loopOnce(); }, 1200);
+    })();
+  } else {
+    playLooping = false; playBtn.textContent = '▶️ Play/Stop Music';
+  }
+});
+
+/* Download portrait */
+downloadBtn.addEventListener('click', async ()=>{
+  try{
+    const src = portraitImg.src;
+    const resp = await fetch(src, {mode:'cors'});
+    const blob = await resp.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${recipientName||'portrait'}.jpg`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+  }catch(err){
+    console.warn("Download failed:", err);
+    alert("Couldn't auto-download. If you embedded a data URI, right-click the image and choose Save image (or upload the image to ./image.jpg and try again).");
+  }
+});
+
+/* Helpful console log */
+console.log("Birthday page loaded. portraitDataURI length:", portraitDataURI.length, "Using local path:", portraitLocalPath);
+</script>
+</body>
+</html>
