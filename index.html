@@ -1,2 +1,446 @@
-hello page 
-testing
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Birthday!</title>
+<style>
+  :root{
+    --bg1: #FFDEE9;
+    --bg2: #B5FFFC;
+    --accent: #FF6B6B;
+    --card: rgba(255,255,255,0.9);
+    --glass: rgba(255,255,255,0.12);
+    --text: #2b2b2b;
+  }
+
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:var(--text);
+    background: linear-gradient(135deg,var(--bg1) 0%, var(--bg2) 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  /* Container */
+  .card{
+    width: min(920px, 94vw);
+    max-width: 920px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.78));
+    box-shadow: 0 10px 30px rgba(20,20,20,0.12);
+    border-radius:18px;
+    display:grid;
+    grid-template-columns: 1fr 360px;
+    gap:1rem;
+    padding:20px;
+    align-items:center;
+    position:relative;
+    overflow:visible;
+    backdrop-filter: blur(6px);
+  }
+
+  /* Responsive stack */
+  @media (max-width:820px){
+    .card{grid-template-columns:1fr; padding:16px;}
+    .side {order:-1;}
+  }
+
+  /* Left: message area */
+  .left{
+    padding:18px 12px;
+  }
+  .headline{
+    font-size: clamp(22px, 3.6vw, 34px);
+    margin:6px 0 12px 0;
+    line-height:1.05;
+    font-weight:700;
+    letter-spacing: -0.02em;
+  }
+  .sub{
+    font-size: clamp(14px, 2.2vw, 16px);
+    color:#4d4d4d;
+    margin-bottom:16px;
+  }
+
+  .big-message{
+    font-size: clamp(16px, 2.4vw, 20px);
+    padding:14px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.4), rgba(255,255,255,0.2));
+    border-radius:12px;
+    border:1px solid rgba(0,0,0,0.04);
+  }
+
+  /* Reveal button */
+  .controls{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  button{
+    appearance:none;
+    border:0;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+  .btn-primary{
+    background: linear-gradient(90deg,#ff7a7a,#ffb86b);
+    color:white;
+  }
+  .btn-ghost{
+    background:transparent;
+    border:1px solid rgba(0,0,0,0.06);
+    color:var(--text);
+  }
+
+  /* Right: portrait/visual */
+  .side{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+    padding:10px;
+  }
+  .portrait{
+    width:320px;
+    height:320px;
+    border-radius:16px;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(180deg,#fff, #fff0);
+    position:relative;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border:1px solid rgba(255,255,255,0.6);
+  }
+  .portrait img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+
+  /* small cupcake svg overlay */
+  .cake{
+    position:absolute;
+    left:12px;
+    bottom:12px;
+    width:82px;
+    opacity:0.95;
+  }
+
+  /* Hidden surprise area */
+  .surprise{
+    margin-top:12px;
+    padding:12px;
+    border-radius:12px;
+    background:var(--glass);
+    border:1px dashed rgba(0,0,0,0.06);
+    display:none;
+    animation:pop .45s ease;
+  }
+  .surprise.show{display:block;}
+
+  @keyframes pop{
+    from {transform:scale(.98);opacity:0}
+    to {transform:scale(1);opacity:1}
+  }
+
+  /* Balloons (floating) */
+  .balloon{
+    position:absolute;
+    width:48px;
+    height:66px;
+    border-radius:48% 48% 50% 50%;
+    transform-origin:center top;
+    animation:float 5s ease-in-out infinite;
+    opacity:0.95;
+  }
+  .balloon:nth-child(1){left:-18px; top:6%; background:linear-gradient(180deg,#FFD1DC,#FF9AA2); animation-delay:0s;}
+  .balloon:nth-child(2){left:6%; top:64%; background:linear-gradient(180deg,#C2F7FF,#72E0FF); animation-delay:1s;}
+  .balloon:nth-child(3){right:-18px; top:12%; background:linear-gradient(180deg,#FFF7B2,#FFD66B); animation-delay:1.8s;}
+  .balloon:after{
+    content:"";
+    position:absolute;
+    left:50%;
+    top:86%;
+    width:2px;
+    height:36px;
+    background:rgba(0,0,0,0.06);
+    transform:translateX(-50%);
+  }
+  @keyframes float{
+    0%{transform:translateY(0) rotate(-3deg)}
+    50%{transform:translateY(-18px) rotate(4deg)}
+    100%{transform:translateY(0) rotate(-3deg)}
+  }
+
+  /* Confetti canvas overlays */
+  canvas.confetti{
+    position:fixed;
+    left:0; top:0;
+    width:100vw; height:100vh;
+    pointer-events:none;
+    z-index:9999;
+  }
+
+  /* footer small note */
+  .footer-note{
+    font-size:12px;
+    color:#666;
+    margin-top:12px;
+  }
+
+</style>
+</head>
+<body>
+  <!-- confetti canvas (JS will size properly) -->
+  <canvas id="confettiCanvas" class="confetti" aria-hidden="true"></canvas>
+
+  <div class="card" role="main" aria-labelledby="title">
+    <!-- balloons decorative -->
+    <div class="balloon" aria-hidden="true" style="--c:1"></div>
+    <div class="balloon" aria-hidden="true"></div>
+    <div class="balloon" aria-hidden="true"></div>
+
+    <div class="left">
+      <h1 id="title" class="headline">Happy Birthday, <span id="namePlace">Friend</span> 🎉</h1>
+      <div class="sub" id="subline">A small surprise made just for you.</div>
+
+      <div class="big-message" id="shortMsg">
+        <!-- initial short message -->
+        Wishing you a day filled with love, laughter, and your favourite cake. Click <strong>Reveal</strong> for a little surprise!
+      </div>
+
+      <div class="controls">
+        <button class="btn-primary" id="revealBtn" aria-controls="surpriseArea">🎁 Reveal Surprise</button>
+        <button class="btn-ghost" id="playBtn">▶️ Play/Stop Music</button>
+        <a class="btn-ghost" id="downloadBtn" href="#" download="birthday-wish.png">📷 Save Snapshot</a>
+      </div>
+
+      <div class="surprise" id="surpriseArea" aria-live="polite">
+        <h3 style="margin:6px 0 8px 0">To the amazing <span id="namePlace2">Friend</span> —</h3>
+        <p id="longMsg">You brighten every room and make life more fun. Today we celebrate you: your kindness, your jokes, and the warmth you share. Happy birthday — here's to another year of adventures together! 💖</p>
+        <div class="footer-note">Click the cake to make a wish (or press the Reveal button again to toggle confetti).</div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="portrait" title="Click cake to make a wish">
+        <!-- default image: replace the src with any URL or local path -->
+        <img id="portraitImg" src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Birthday photo">
+        <!-- cake svg -->
+        <svg class="cake" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cake icon">
+          <rect x="6" y="28" width="52" height="22" rx="3" fill="#FFFBF0"/>
+          <path d="M6 28c6-6 18-6 26-1 8-5 20-5 26 1" fill="#FFD9D9"/>
+          <rect x="16" y="36" width="6" height="10" rx="1" fill="#FF6B6B"/>
+          <rect x="30" y="36" width="6" height="10" rx="1" fill="#FFB86B"/>
+          <rect x="44" y="36" width="6" height="10" rx="1" fill="#72E0FF"/>
+          <path d="M32 16c0 4-4 6-4 6s0-3 0-6 2-4 4-4 4 1 4 4-0 6-0 6-4-2-4-6z" fill="#FFD66B"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+<script>
+/*
+  Simple Personalization:
+  Change these values to customize quickly.
+*/
+const recipientName = "Alex";          // name shown
+const shortMessage = "Wishing you a day filled with love, laughter, and your favourite cake. Click Reveal for a little surprise!";
+const longMessage = "You brighten every room and make life more fun. Today we celebrate you for the kindness, the laughs, and the memories. Happy birthday — here's to a year full of adventures, joy, and success. Love you!";
+const portraitURL = ""; // put an image URL here (leave blank to use default)
+const musicURL = "";    // put an mp3 URL if you want auto music (or leave blank)
+
+/* Apply personalization into DOM */
+document.getElementById('namePlace').textContent = recipientName;
+document.getElementById('namePlace2').textContent = recipientName;
+document.getElementById('shortMsg').textContent = shortMessage;
+document.getElementById('longMsg').textContent = longMessage;
+if (portraitURL) document.getElementById('portraitImg').src = portraitURL;
+
+/* Reveal / confetti logic */
+const revealBtn = document.getElementById('revealBtn');
+const surpriseArea = document.getElementById('surpriseArea');
+const confettiCanvas = document.getElementById('confettiCanvas');
+
+let confettiActive = false;
+
+/* Simple confetti implementation (no libraries) */
+function Confetti(canvas) {
+  this.canvas = canvas;
+  this.ctx = canvas.getContext('2d');
+  this.particles = [];
+  this.running = false;
+  this.resize();
+  window.addEventListener('resize', ()=>this.resize());
+}
+Confetti.prototype.resize = function(){
+  const dpr = window.devicePixelRatio || 1;
+  this.canvas.width = Math.max(innerWidth, 300) * dpr;
+  this.canvas.height = Math.max(innerHeight, 300) * dpr;
+  this.ctx.scale(dpr, dpr);
+};
+Confetti.prototype.start = function(){
+  if (this.running) return;
+  this.running = true;
+  // create particles
+  for(let i=0;i<120;i++){
+    this.particles.push(this.spawn());
+  }
+  this.last = performance.now();
+  this.run();
+};
+Confetti.prototype.stop = function(){
+  this.running = false;
+  // allow fade out; remove after a while
+  setTimeout(()=> this.particles = [], 800);
+  this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+};
+Confetti.prototype.spawn = function(){
+  const w = innerWidth, h = innerHeight;
+  return {
+    x: Math.random()*w,
+    y: -10 - Math.random()*h*0.2,
+    size: 6 + Math.random()*8,
+    tilt: Math.random()*Math.PI,
+    speedY: 2 + Math.random()*5,
+    speedX: -2 + Math.random()*4,
+    angle: Math.random()*Math.PI*2,
+    rotateSpeed: (-0.04 + Math.random()*0.08),
+    color: ["#FF6B6B","#FFB86B","#FFD66B","#72E0FF","#C2F7FF","#C7F7D6"][Math.floor(Math.random()*6)]
+  };
+};
+Confetti.prototype.update = function(dt){
+  for (let p of this.particles){
+    p.y += p.speedY * dt * 0.06;
+    p.x += p.speedX * dt * 0.06;
+    p.angle += p.rotateSpeed * dt * 0.06;
+    // slow drift & loop
+    if (p.y > innerHeight + 40) {
+      Object.assign(p, this.spawn());
+      p.y = -20;
+    }
+  }
+};
+Confetti.prototype.draw = function(){
+  const ctx = this.ctx;
+  ctx.clearRect(0,0, this.canvas.width, this.canvas.height);
+  for (let p of this.particles){
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.angle);
+    ctx.fillStyle = p.color;
+    // draw rectangle confetti
+    ctx.fillRect(-p.size/2, -p.size/2, p.size, Math.max(2,p.size*0.6));
+    ctx.restore();
+  }
+};
+Confetti.prototype.run = function(){
+  if (!this.running) return;
+  const now = performance.now();
+  const dt = now - (this.last || now);
+  this.last = now;
+  this.update(dt);
+  this.draw();
+  requestAnimationFrame(()=>this.run());
+};
+
+const confetti = new Confetti(confettiCanvas);
+
+revealBtn.addEventListener('click', ()=>{
+  const showing = surpriseArea.classList.toggle('show');
+  // show confetti when showing; toggle otherwise
+  if (showing) {
+    confetti.start();
+    confettiActive = true;
+    // stop after 7s
+    setTimeout(()=>{ confetti.stop(); confettiActive=false; }, 7000);
+  } else {
+    confetti.stop();
+    confettiActive = false;
+  }
+});
+
+/* cake click: trigger wish / confetti again */
+const cake = document.querySelector('.cake');
+cake.addEventListener('click', ()=>{
+  // briefly toggle confetti
+  confetti.start();
+  setTimeout(()=>confetti.stop(), 6000);
+});
+
+/* Music: optional */
+let audio = null;
+const playBtn = document.getElementById('playBtn');
+if (musicURL){
+  audio = new Audio(musicURL);
+  audio.loop = true;
+  audio.volume = 0.75;
+}
+playBtn.addEventListener('click', ()=>{
+  if (!audio){
+    // graceful fallback: brief beep via WebAudio
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'sine'; o.frequency.value = 880;
+    g.gain.value = 0.0001;
+    o.connect(g); g.connect(ctx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.03, ctx.currentTime + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime + 0.35);
+    o.stop(ctx.currentTime + 0.36);
+    return;
+  }
+  if (audio.paused){
+    audio.play();
+    playBtn.textContent = "⏸ Stop Music";
+  } else {
+    audio.pause();
+    playBtn.textContent = "▶️ Play/Stop Music";
+  }
+});
+
+/* Snapshot: allow saving a PNG of the card */
+const downloadBtn = document.getElementById('downloadBtn');
+downloadBtn.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  // simple snapshot using html2canvas-like technique is omitted to keep this file dependency-free.
+  // Instead, capture the portrait only as a quick demo (safer cross-origin).
+  const imgEl = document.getElementById('portraitImg');
+  // If same-origin or permissive CORS: we can download the image. Otherwise fallback to a message.
+  try {
+    const resp = await fetch(imgEl.src, {mode:'cors'});
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${recipientName || 'birthday'}-portrait.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch(err){
+    alert("Couldn't download image due to browser restrictions. Try right-clicking the picture and saving it.");
+  }
+});
+
+/* Accessibility: keyboard shortcut R to reveal */
+window.addEventListener('keydown', (ev)=>{
+  if (ev.key.toLowerCase() === 'r') {
+    revealBtn.click();
+  }
+});
+</script>
+</body>
+</html>
